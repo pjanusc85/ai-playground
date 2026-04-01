@@ -69,13 +69,23 @@ export function HistoryList() {
           key={comparison.id}
           className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-lg overflow-hidden"
         >
-          <button
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() =>
               setExpandedId(
                 expandedId === comparison.id ? null : comparison.id
               )
             }
-            className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[var(--bg-elevated)] transition-colors"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setExpandedId(
+                  expandedId === comparison.id ? null : comparison.id
+                );
+              }
+            }}
+            className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
           >
             <div className="flex-1 min-w-0">
               <p className="text-sm truncate">{comparison.prompt}</p>
@@ -113,7 +123,7 @@ export function HistoryList() {
                 Delete
               </button>
             </div>
-          </button>
+          </div>
 
           {expandedId === comparison.id && (
             <HistoryDetail comparison={comparison} />
