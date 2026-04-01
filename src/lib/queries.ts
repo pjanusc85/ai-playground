@@ -1,4 +1,5 @@
 import { prisma } from "./db";
+import { CollectedResponse } from "./ai/stream-compare";
 
 export async function saveComparison(
   prompt: string,
@@ -59,5 +60,32 @@ export async function toggleSaved(id: string, saved: boolean) {
 export async function deleteComparison(id: string) {
   return prisma.comparison.delete({
     where: { id },
+  });
+}
+
+export async function saveComparisonFromStream(
+  prompt: string,
+  system: string | null,
+  responses: CollectedResponse[]
+) {
+  return prisma.comparison.create({
+    data: {
+      prompt,
+      system,
+      saved: false,
+      responses: {
+        create: responses.map((r) => ({
+          modelId: r.modelId,
+          provider: r.provider,
+          content: r.content,
+          promptTokens: r.promptTokens,
+          completionTokens: r.completionTokens,
+          totalTokens: r.totalTokens,
+          estimatedCost: r.estimatedCost,
+          latencyMs: r.latencyMs,
+          error: r.error,
+        })),
+      },
+    },
   });
 }
