@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: okara-postgres
+    environment:
+      POSTGRES_USER: okara
+      POSTGRES_PASSWORD: okara
+      POSTGRES_DB: okara
+    ports:
+      - "5433:5432"
+    volumes:
+      - okara-pgdata:/var/lib/postgresql/data
+
+volumes:
+  okara-pgdata:
