@@ -4,6 +4,11 @@ import { MODELS } from "./models";
 import { calculateCost } from "../utils";
 import { ModelId, StreamEvent, TokenUsage } from "@/types";
 
+// Rough estimate: ~4 chars per token (GPT/Claude average)
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+
 export interface CollectedResponse {
   modelId: ModelId;
   provider: string;
@@ -58,8 +63,8 @@ export function createCompareStream(
 
           const usage = await result.usage;
           const latencyMs = Date.now() - startTime;
-          const inputTokens = usage.inputTokens ?? 0;
-          const outputTokens = usage.outputTokens ?? 0;
+          const inputTokens = usage.inputTokens ?? estimateTokens(prompt + (system || ""));
+          const outputTokens = usage.outputTokens ?? estimateTokens(fullText);
           const tokenUsage: TokenUsage = {
             promptTokens: inputTokens,
             completionTokens: outputTokens,
