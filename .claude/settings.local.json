@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(npx:*)",
-      "Bash(npm:*)"
+      "Bash(npm:*)",
+      "Bash(timeout 15 npm run dev)",
+      "Bash(git:*)",
+      "Bash(git commit:*)",
+      "Bash(git init:*)",
+      "Bash(npm run:*)",
+      "Bash(find:*",
+      "Bash(2)"
     ]
   }
 }

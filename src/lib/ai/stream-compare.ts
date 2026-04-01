@@ -56,12 +56,14 @@ export function createCompareStream(
             );
           }
 
-          const { usage } = await result;
+          const usage = await result.usage;
           const latencyMs = Date.now() - startTime;
+          const inputTokens = usage.inputTokens ?? 0;
+          const outputTokens = usage.outputTokens ?? 0;
           const tokenUsage: TokenUsage = {
-            promptTokens: usage.promptTokens,
-            completionTokens: usage.completionTokens,
-            totalTokens: usage.totalTokens,
+            promptTokens: inputTokens,
+            completionTokens: outputTokens,
+            totalTokens: inputTokens + outputTokens,
           };
           const estimatedCost = calculateCost(tokenUsage, modelConfig);
 
