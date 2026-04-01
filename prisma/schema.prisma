@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Comparison {
+  id        String   @id @default(cuid())
+  prompt    String
+  system    String?
+  saved     Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  responses Response[]
+}
+
+model Response {
+  id               String   @id @default(cuid())
+  comparisonId     String
+  modelId          String
+  provider         String
+  content          String
+  promptTokens     Int      @default(0)
+  completionTokens Int      @default(0)
+  totalTokens      Int      @default(0)
+  estimatedCost    Float    @default(0)
+  latencyMs        Int      @default(0)
+  error            String?
+  createdAt        DateTime @default(now())
+
+  comparison Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+
+  @@index([comparisonId])
+}
