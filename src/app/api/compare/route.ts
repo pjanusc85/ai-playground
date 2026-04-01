@@ -1,5 +1,6 @@
 import { createCompareStream } from "@/lib/ai/stream-compare";
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 
 export const maxDuration = 60;
 
@@ -23,9 +24,10 @@ export async function POST(req: NextRequest) {
 
   const { stream, completionPromise } = createCompareStream(prompt, system);
 
-  // Fire-and-forget: save to DB after all streams finish
-  completionPromise.then(async (collectedResponses) => {
+  // Use after() to keep the function alive until the DB save completes
+  after(async () => {
     try {
+      const collectedResponses = await completionPromise;
       const { saveComparisonFromStream } = await import("@/lib/queries");
       await saveComparisonFromStream(prompt, system || null, collectedResponses);
     } catch (e) {
@@ -37,7 +39,6 @@ export async function POST(req: NextRequest) {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
-      Connection: "keep-alive",
     },
   });
 }
